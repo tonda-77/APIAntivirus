@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("apiAntivirus")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5c48a62f42ab10386d46c00f1757d0f0d1d15baf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+222e913f99028aa701fb2fdcc3ccc7f1df5c4cc5")]
 [assembly: System.Reflection.AssemblyProductAttribute("apiAntivirus")]
 [assembly: System.Reflection.AssemblyTitleAttribute("apiAntivirus")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
