@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\navsteva\\apiAntivirus\\apiAntivirus.csproj": {}
+    "C:\\Users\\navsteva\\apiantivirus\\apiAntivirus.csproj": {}
   },
   "projects": {
-    "C:\\Users\\navsteva\\apiAntivirus\\apiAntivirus.csproj": {
+    "C:\\Users\\navsteva\\apiantivirus\\apiAntivirus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\navsteva\\apiAntivirus\\apiAntivirus.csproj",
+        "projectUniqueName": "C:\\Users\\navsteva\\apiantivirus\\apiAntivirus.csproj",
         "projectName": "apiAntivirus",
-        "projectPath": "C:\\Users\\navsteva\\apiAntivirus\\apiAntivirus.csproj",
+        "projectPath": "C:\\Users\\navsteva\\apiantivirus\\apiAntivirus.csproj",
         "packagesPath": "C:\\Users\\navsteva\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\navsteva\\apiAntivirus\\obj\\",
+        "outputPath": "C:\\Users\\navsteva\\apiantivirus\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

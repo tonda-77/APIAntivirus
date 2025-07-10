@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3+xzMOvG3YcbbLEyI6pPHrjkCzvXNLFOLgt9G8eWjtqmFvQ4IkYm7ejpCe8187n3TeN1psSesM8ESxHe9fi2sw==",
+  "dgSpecHash": "Pzkb4k0ZCLv0hkJrH1Oy2R4n5CbBU1ZrsRaIZ32GAjeVxcByx25j0rJ/nMBmbNn5YfqjbhaW318uv9kMrya9CA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\navsteva\\apiAntivirus\\apiAntivirus.csproj",
+  "projectFilePath": "C:\\Users\\navsteva\\apiantivirus\\apiAntivirus.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

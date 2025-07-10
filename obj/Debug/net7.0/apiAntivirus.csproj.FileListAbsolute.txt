@@ -1,0 +1,14 @@
+C:\Users\navsteva\apiantivirus\bin\Debug\net7.0\apiAntivirus.exe
+C:\Users\navsteva\apiantivirus\bin\Debug\net7.0\apiAntivirus.deps.json
+C:\Users\navsteva\apiantivirus\bin\Debug\net7.0\apiAntivirus.runtimeconfig.json
+C:\Users\navsteva\apiantivirus\bin\Debug\net7.0\apiAntivirus.dll
+C:\Users\navsteva\apiantivirus\bin\Debug\net7.0\apiAntivirus.pdb
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.AssemblyInfoInputs.cache
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.AssemblyInfo.cs
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.csproj.CoreCompileInputs.cache
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.dll
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\refint\apiAntivirus.dll
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.pdb
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\apiAntivirus.genruntimeconfig.cache
+C:\Users\navsteva\apiantivirus\obj\Debug\net7.0\ref\apiAntivirus.dll
