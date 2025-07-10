@@ -153,7 +153,7 @@ class Program
             }
         }
 
-        // Po úspěšném přihlášení spustíme VirusTotal scanner
+        // Po úspěšném přihlášení se spusti VirusTotal API
         Console.Clear();
         Console.WriteLine("Vitej v antivirovem skeneru! 🦠🔍");
         Thread.Sleep(1000);
@@ -217,7 +217,7 @@ class Program
         }
     }
 
-    // Funkce z druhé části kódu (VirusTotal scanner)
+    // Funkce z druhé části kódu (VirusTotal API)
     static async Task RunMainLoopAsync()
     {
         string frame1option1 = @"
