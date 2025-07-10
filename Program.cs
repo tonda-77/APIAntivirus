@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 class Program
 {
     // Proměnné z druhé části kódu
-    static readonly string apiKey = "80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609";
+    static readonly string apiKey = "80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609"; // API Key
     static int selectedOption = 1;
     static bool blinkState = false;
 
-    static async Task Main()
+    static async Task Main() // Log-In system
     {
 
         List<string> usernames = new List<string>();
@@ -97,14 +97,14 @@ class Program
                         passwords.Add(registrationPasswordInput);
                         Thread.Sleep(700);
 
-                        Console.WriteLine("Taakze, toto je tve username: " + registrationUsernameInput + "  😊");
+                        Console.WriteLine("Taakze, toto je tve username: " + registrationUsernameInput + "  😊"); // Vypise tvoje jmeno a heslo
                         Thread.Sleep(500);
                         Console.WriteLine("A toto je tve heslo: " + registrationPasswordInput + "  😊");
                         Thread.Sleep(500);
 
                         Console.WriteLine("                                                     ");
                         Console.WriteLine("                                                     ");
-                        Console.WriteLine("Je takhle vse v poradku (y/n)? 🤔");
+                        Console.WriteLine("Je takhle vse v poradku (y/n)? 🤔"); // hmmmmmm
                         Thread.Sleep(200);
                         Console.WriteLine("Ano (y)");
                         Console.WriteLine("Ne (n)");
@@ -153,7 +153,6 @@ class Program
             }
         }
 
-        // Po úspěšném přihlášení se spusti VirusTotal API
         Console.Clear();
         Console.WriteLine("Vitej v antivirovem skeneru! 🦠🔍");
         Thread.Sleep(1000);
@@ -187,7 +186,7 @@ class Program
         return input;
     }
 
-    static void quitApp()
+    static void quitApp() // NOO NOO QUIT APP TUNG TUNG TUNG SAHUR...
     {
         Console.WriteLine("Neeeeeeeeeeeeee 😖😭😭");
         Thread.Sleep(1500);
@@ -217,9 +216,10 @@ class Program
         }
     }
 
-    // Funkce z druhé části kódu (VirusTotal API)
+    // Funkce z druhé části kódu (Tohle je ten hlavní anti virus haha)
     static async Task RunMainLoopAsync()
     {
+        // A tohle jsou frames ano... Na animaci ne asi
         string frame1option1 = @"
 Simple Anti-Virus
 ┌────────────────────────┐
@@ -268,7 +268,7 @@ Simple Anti-Virus
 │                        │
 └────────────────────────┘";
 
-        while (true)
+        while (true) // Tady to je na ty down/up arrow keys aby jsi mohl selectnout akci
         {
             while (Console.KeyAvailable)
             {
@@ -317,6 +317,7 @@ Simple Anti-Virus
         }
     }
 
+//Tady dáš ten file který to má skenovat
     static async Task ScanFileAsync()
     {
         Console.Clear();
@@ -330,10 +331,10 @@ Simple Anti-Virus
             return;
         }
 
-        Console.WriteLine("Uploading file to VirusTotal...");
+        Console.WriteLine("Uploading file to VirusTotal..."); // Self-Explenatory
 
         try
-        {
+        { // Vytvoří HTTP klienta s API klíčem a připraví soubor k odeslání ve formátu multipart/form-data. WOW🤯
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("x-apikey", apiKey);
 
@@ -343,9 +344,10 @@ Simple Anti-Virus
             content.Add(fileContent, "file", Path.GetFileName(path));
 
 
-            HttpResponseMessage uploadResponse = await client.PostAsync("https://www.virustotal.com/api/v3/files", content);
+            HttpResponseMessage uploadResponse = await client.PostAsync("https://www.virustotal.com/api/v3/files", content); // Nahraje soubor na VirusTotal a ověří úspěšnost
             uploadResponse.EnsureSuccessStatusCode();
 
+            // Získá ID analýzy z odpovědi po nahrání souboru haha xd nevim proc se směju
             var json = await uploadResponse.Content.ReadAsStringAsync();
             using JsonDocument doc = JsonDocument.Parse(json);
             string analysisId = doc.RootElement.GetProperty("data").GetProperty("id").GetString();
@@ -355,6 +357,7 @@ Simple Anti-Virus
             bool done = false;
             while (!done)
             {
+                // Počká 5 sekund, pak stáhne stav analýzy a zkontroluje, zda je dokončená. wowie aSHIJNDAIHdsadodshdshadsoiasda achjo čte jsi mě vůbec někdo?
                 await Task.Delay(5000);
 
                 HttpResponseMessage analysisResponse = await client.GetAsync($"https://www.virustotal.com/api/v3/analyses/{analysisId}");
@@ -374,7 +377,7 @@ Simple Anti-Virus
                     int suspicious = stats.GetProperty("suspicious").GetInt32();
                     int harmless = stats.GetProperty("harmless").GetInt32();
                     int undetected = stats.GetProperty("undetected").GetInt32();
-
+                    // Tady jsou výsledky
                     Console.WriteLine("Scan complete:");
                     Console.WriteLine("Malicious: " + malicious);
                     Console.WriteLine("Suspicious: " + suspicious);
@@ -383,7 +386,7 @@ Simple Anti-Virus
                     Console.WriteLine("\nPress any key to return to menu...");
                     Console.ReadKey(true);
                 }
-                else
+                else // A kdyz ne tak to zase da Analysis in progress...
                 {
                     Console.WriteLine("Analysis in progress...");
                 }
