@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 class Program
 {
     // Proměnné z druhé části kódu
-    static readonly string apiKey = "80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609"; // API Key
+    static readonly string apiKey = "e25b72fccd3414fd7e66de6ac46c94e4da211414a4504d678e9a7c07aa62edc1"; // API Key - old: 80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609
 
     // Log folder paths on Desktop
     static readonly string avLogsFolderPath = Path.Combine(
