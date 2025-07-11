@@ -7,22 +7,23 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 class Program
 {
+    // DPI funkce pro ostré dialogy
+    [DllImport("user32.dll")]
+    private static extern bool SetProcessDPIAware();
+
     // Proměnné z druhé části kódu
     static readonly string apiKey = "e25b72fccd3414fd7e66de6ac46c94e4da211414a4504d678e9a7c07aa62edc1"; // API Key - old: 80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609
 
-    // Log folder paths on Desktop
-    static readonly string avLogsFolderPath = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-        "AV_Logs"
-    );
-
+    // Všechny cesty k souborům a složkám v projektu (AV = Anti-Virus)
+    static readonly string avLogsFolderPath = Path.Combine("..", "..", "..", "AV_Logs");
+    static readonly string accountsFolderPath = Path.Combine(avLogsFolderPath, "accounts");
     static readonly string logFolderPath = Path.Combine(avLogsFolderPath, "logs");
-
-    // Master accounts file path
-    static readonly string accountsFilePath = Path.Combine(avLogsFolderPath, "Accounts.txt");
+    static readonly string accountsFilePath = Path.Combine(accountsFolderPath, "Accounts.txt");
 
     static int selectedOption = 1;
     static bool blinkState = false;
@@ -31,40 +32,51 @@ class Program
     static int originalWidth = Console.WindowWidth; //uprava pormene na static aby se dala pouzit v main - David
     static int originalHeight = Console.WindowHeight;
 
+    [STAThread]
     static async Task Main() // Login system
     {
+        // DPI pro ostry dialogy
+        if (Environment.OSVersion.Version.Major >= 6) 
+        {
+            SetProcessDPIAware();
+        }
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-        // Ensure AV_Logs folder and logs folder exist
+        // Nastavení pro zobrazení emoji
+        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Console.InputEncoding = System.Text.Encoding.UTF8;
+
+        // Ensure AV_Logs folder, accounts folder and logs folder exist
         Directory.CreateDirectory(avLogsFolderPath);
+        Directory.CreateDirectory(accountsFolderPath);
         Directory.CreateDirectory(logFolderPath);
 
         // Lists for usernames and passwords - Login lists
         List<string> usernames = new List<string>();
         List<string> passwords = new List<string>();
 
-        // If Accounts.txt exists, load existing accounts into lists
-        if (File.Exists(accountsFilePath))
+        // Load existing accounts from individual files
+        if (Directory.Exists(accountsFolderPath))
         {
             try
             {
-                var lines = File.ReadAllLines(accountsFilePath);
-                // Format assumed:
-                // Account 1.
-                // Username: user
-                // Password: pass
-                // (empty line or next account)
-                for (int i = 0; i < lines.Length; i++)
+                var accountFiles = Directory.GetFiles(accountsFolderPath, "Account_*.txt");
+                foreach (var file in accountFiles)
                 {
-                    if (lines[i].StartsWith("Username: "))
+                    var lines = File.ReadAllLines(file);
+                    for (int i = 0; i < lines.Length; i++)
                     {
-                        usernames.Add(lines[i].Substring("Username: ".Length));
-                    }
-                    else if (lines[i].StartsWith("Password: "))
-                    {
-                        passwords.Add(lines[i].Substring("Password: ".Length));
+                        if (lines[i].StartsWith("Username: "))
+                        {
+                            usernames.Add(lines[i].Substring("Username: ".Length));
+                        }
+                        else if (lines[i].StartsWith("Password: "))
+                        {
+                            passwords.Add(lines[i].Substring("Password: ".Length));
+                        }
                     }
                 }
-                // It is expected usernames and passwords list lengths are equal
             }
             catch
             {
@@ -262,26 +274,12 @@ class Program
         await RunMainLoopAsync();
     }
 
-    // Save the accounts into the master file and individual account files
+    // Save each account to separate file (1 account = 1 file)
     static void SaveAccountsToFiles(List<string> usernames, List<string> passwords)
     {
-        // Build master Accounts.txt content
-        var sb = new StringBuilder();
         for (int i = 0; i < usernames.Count; i++)
         {
-            sb.AppendLine($"Account {i + 1}.");
-            sb.AppendLine($"Username: {usernames[i]}");
-            sb.AppendLine($"Password: {passwords[i]}");
-            sb.AppendLine();
-        }
-
-        // Write master file
-        File.WriteAllText(accountsFilePath, sb.ToString());
-
-        // Write individual account files
-        for (int i = 0; i < usernames.Count; i++)
-        {
-            string individualFilePath = Path.Combine(avLogsFolderPath, $"Account_{i + 1}.txt");
+            string individualFilePath = Path.Combine(accountsFolderPath, $"Account_{i + 1}.txt");
             var accountSb = new StringBuilder();
             accountSb.AppendLine($"Account {i + 1}.");
             accountSb.AppendLine($"Username: {usernames[i]}");
@@ -464,18 +462,65 @@ API Antivirus:
         }
     }
 
+    // Otevře Windows dialog pro výběr souboru
+    static string OpenFileDialog()
+    {
+        string result = string.Empty;
+        
+        Thread thread = new Thread(() =>
+        {
+            using (var dialog = new OpenFileDialog())
+            {
+                dialog.Title = "Vyber soubor pro skenování";
+                dialog.Filter = "Všechny soubory (*.*)|*.*";
+                dialog.InitialDirectory = Directory.GetCurrentDirectory();
+                
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    result = dialog.FileName;
+            }
+        });
+        
+        thread.SetApartmentState(ApartmentState.STA);
+        thread.Start();
+        thread.Join();
+        
+        return result;
+    }
+
     static async Task ScanFileAsync()
     {
         Console.Clear();
-        Console.WriteLine("Zadej celou cestu k souboru ke skenovani:");
-        string path = Console.ReadLine()?.Trim('"');
-
-        if (!File.Exists(path))
+        Console.WriteLine("===== VÝBĚR SOUBORU PRO SKENOVÁNÍ =====");
+        Console.WriteLine();
+        Console.WriteLine("Otevirám Windows průzkumník... 📁");
+        
+        // Otevře dialog pro výběr souboru
+        string path = OpenFileDialog();
+        
+        // Počká a vyčistí obrazovku
+        Thread.Sleep(500);
+        Console.Clear();
+        
+        if (string.IsNullOrEmpty(path))
         {
-            Console.WriteLine("Soubor nenalezen! Stiskni libovolnou klavesu pro navraceni do menu..");
+            Console.WriteLine("❌ Žádný soubor nebyl vybrán.");
+            Console.WriteLine("Stiskni libovolnou klávesu pro návrat do menu..");
             Console.ReadKey(true);
             return;
         }
+
+        // Kontrola existence souboru
+
+        if (!File.Exists(path))
+        {
+            Console.WriteLine("❌ Soubor nenalezen!");
+            Console.WriteLine($"Cesta: {path}");
+            Console.WriteLine("Stiskni libovolnou klávesu pro návrat do menu..");
+            Console.ReadKey(true);
+            return;
+        }
+        
+        Console.WriteLine($"✅ Soubor vybrán: {Path.GetFileName(path)}");
 
         Console.WriteLine("Nahravani souboru do VirusTotal..");
 

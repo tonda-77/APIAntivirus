@@ -4,10 +4,11 @@ bin/
 # Ignorovat složku obj
 obj/
 
+# Ignorovat Visual Studio složky
+.vs/
+
 # Ignorovat všechny .config soubory v projektu
 *.config
 
 # Pokud máš složku .config (skrytou složku), ignoruj ji celou
 .config/
-
-apiAntivirus.csproj
