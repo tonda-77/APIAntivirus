@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,10 +12,18 @@ class Program
 {
     // Proměnné z druhé části kódu
     static readonly string apiKey = "80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609"; // API Key
-    static readonly string logFolderPath = Path.Combine(
+
+    // Log folder paths on Desktop
+    static readonly string avLogsFolderPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
-        "AV_logs", "logs"
+        "AV_Logs"
     );
+
+    static readonly string logFolderPath = Path.Combine(avLogsFolderPath, "logs");
+
+    // Master accounts file path
+    static readonly string accountsFilePath = Path.Combine(avLogsFolderPath, "Accounts.txt");
+
     static int selectedOption = 1;
     static bool blinkState = false;
 
@@ -22,15 +31,47 @@ class Program
     static int originalWidth = Console.WindowWidth; //uprava pormene na static aby se dala pouzit v main - David
     static int originalHeight = Console.WindowHeight;
 
-
-
     static async Task Main() // Login system
     {
-        // Listy pro uživatelská jména a hesla - Login listy
+
+        // Ensure AV_Logs folder and logs folder exist
+        Directory.CreateDirectory(avLogsFolderPath);
+        Directory.CreateDirectory(logFolderPath);
+
+        // Lists for usernames and passwords - Login lists
         List<string> usernames = new List<string>();
         List<string> passwords = new List<string>();
 
-        
+        // If Accounts.txt exists, load existing accounts into lists
+        if (File.Exists(accountsFilePath))
+        {
+            try
+            {
+                var lines = File.ReadAllLines(accountsFilePath);
+                // Format assumed:
+                // Account 1.
+                // Username: user
+                // Password: pass
+                // (empty line or next account)
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].StartsWith("Username: "))
+                    {
+                        usernames.Add(lines[i].Substring("Username: ".Length));
+                    }
+                    else if (lines[i].StartsWith("Password: "))
+                    {
+                        passwords.Add(lines[i].Substring("Password: ".Length));
+                    }
+                }
+                // It is expected usernames and passwords list lengths are equal
+            }
+            catch
+            {
+                // If error reading accounts, just continue with empty lists
+            }
+        }
+
         Console.WriteLine("                             y                        ");
         Console.WriteLine("                                                     ");
         Console.Clear();
@@ -49,12 +90,11 @@ class Program
             Console.WriteLine("===== Moznosti prihlaseni: =====");
             Console.WriteLine("1.       Prihlasit se ");
             Console.WriteLine("2.       Vytvorit si novy ucet ");
-            Console.WriteLine("3.       Ukoncit nejlepsi antivirus?!?! 😭");
+            Console.WriteLine("3.       Ukoncit nejlepsi antivirus vsech dob?!?! 😲😖😭");
             Console.WriteLine("                                                     ");
 
             int loginOptionInput;
             int.TryParse(ReadLineWithQuit(), out loginOptionInput);
-
 
             switch (loginOptionInput)
             {
@@ -74,7 +114,6 @@ class Program
                         {
                             if (passwords[index] == loginPasswordInput)
                             {
-
                                 Console.WriteLine("                                                     ");
                                 Console.WriteLine("Prihlaseni uspesne! 😁");
                                 Thread.Sleep(1000);
@@ -114,15 +153,24 @@ class Program
 
                         Console.WriteLine("Zadej sve username pro vytvoreni uctu: ");
                         string registrationUsernameInput = ReadLineWithQuit();
-                        usernames.Add(registrationUsernameInput);
 
                         Console.WriteLine("Zadej sve heslo pro vytvoreni uctu: ");
                         string registrationPasswordInput = ReadLineWithQuit();
+
+                        // Before adding, check if username already exists
+                        if (usernames.Contains(registrationUsernameInput))
+                        {
+                            Console.WriteLine("Toto username jiz existuje, zkus to jine. 😊");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            continue; // Restart registration loop
+                        }
+
+                        usernames.Add(registrationUsernameInput);
                         passwords.Add(registrationPasswordInput);
                         Thread.Sleep(700);
 
-
-                        chechIfUserAcceptRegistration:
+                    chechIfUserAcceptRegistration:
 
                         Console.Clear();
                         Console.WriteLine("                                                     ");
@@ -137,32 +185,35 @@ class Program
                         Console.WriteLine("Ano (y)");
                         Console.WriteLine("Ne (n)");
                         char confirmRegistrationInput;
-                        
+
                         Console.WriteLine("                                                     ");
                         char.TryParse(ReadLineWithQuit(), out confirmRegistrationInput);
                         if (confirmRegistrationInput == 'y')
                         {
-                                Thread.Sleep(1000);
-                                Console.Clear();
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            Console.WriteLine("                                                     ");
+                            Console.WriteLine("Ukladam.. 🙄");
+                            Thread.Sleep(2000);
+                            // Kontrola s aktuálním indexem (zkracene poslední přidaný účet)
+                            int currentIndex = usernames.Count - 1;
+                            if (registrationUsernameInput == usernames[currentIndex] && registrationPasswordInput == passwords[currentIndex])
+                            {
                                 Console.WriteLine("                                                     ");
-                                Console.WriteLine("Ukladam.. 🙄");
-                                Thread.Sleep(2000);
-                                // Kontrola s aktuálním indexem (zkracene poslední přidaný účet)
-                                int currentIndex = usernames.Count - 1;
-                                if (registrationUsernameInput == usernames[currentIndex] && registrationPasswordInput == passwords[currentIndex])
-                                {
-                                    Console.WriteLine("                                                     ");
-                                    Console.WriteLine("Vse je v poradku, takze se muzes prihlasit 🤔");
-                                    Thread.Sleep(800);
-                                }
-                                registrationComplete = true; // Ukončí forloop registrace
+                                Console.WriteLine("Vse je v poradku, takze se muzes prihlasit 🤔");
+                                Thread.Sleep(800);
 
-                                // Přepne na přihlášení
-                                Console.WriteLine("Přepínám na přihlášení.. 🔄");
-                                Thread.Sleep(500);
-                                Console.Clear();
-                                Console.WriteLine("                                                     ");
-                                goto case 1;
+                                // Save accounts to text files
+                                SaveAccountsToFiles(usernames, passwords);
+                            }
+                            registrationComplete = true; // Ukončí forloop registrace
+
+                            // Přepne na přihlášení
+                            Console.WriteLine("Přepínám na přihlášení.. 🔄");
+                            Thread.Sleep(500);
+                            Console.Clear();
+                            Console.WriteLine("                                                     ");
+                            goto case 1;
                         }
                         else if (confirmRegistrationInput == 'n')
                         {
@@ -209,6 +260,34 @@ class Program
         Console.CursorVisible = false;
 
         await RunMainLoopAsync();
+    }
+
+    // Save the accounts into the master file and individual account files
+    static void SaveAccountsToFiles(List<string> usernames, List<string> passwords)
+    {
+        // Build master Accounts.txt content
+        var sb = new StringBuilder();
+        for (int i = 0; i < usernames.Count; i++)
+        {
+            sb.AppendLine($"Account {i + 1}.");
+            sb.AppendLine($"Username: {usernames[i]}");
+            sb.AppendLine($"Password: {passwords[i]}");
+            sb.AppendLine();
+        }
+
+        // Write master file
+        File.WriteAllText(accountsFilePath, sb.ToString());
+
+        // Write individual account files
+        for (int i = 0; i < usernames.Count; i++)
+        {
+            string individualFilePath = Path.Combine(avLogsFolderPath, $"Account_{i + 1}.txt");
+            var accountSb = new StringBuilder();
+            accountSb.AppendLine($"Account {i + 1}.");
+            accountSb.AppendLine($"Username: {usernames[i]}");
+            accountSb.AppendLine($"Password: {passwords[i]}");
+            File.WriteAllText(individualFilePath, accountSb.ToString());
+        }
     }
 
     static void KlavesaProPokracovani()
