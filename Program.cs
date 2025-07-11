@@ -49,7 +49,7 @@ class Program
             Console.WriteLine("===== Moznosti prihlaseni: =====");
             Console.WriteLine("1.       Prihlasit se ");
             Console.WriteLine("2.       Vytvorit si novy ucet ");
-            Console.WriteLine("3.       Ukoncit nejlepsi antivirus vsech dob?!?! 😲😖😭");
+            Console.WriteLine("3.       Ukoncit nejlepsi antivirus?!?! 😭");
             Console.WriteLine("                                                     ");
 
             int loginOptionInput;
@@ -281,9 +281,9 @@ class Program
     static async Task RunMainLoopAsync()
     {
         string frame1option1 = @"
-Chytry Antivirus: 🤡
+API Antivirus: 
 ┌────────────────────────┐
-│ 1. Scan File           │
+│ 1. Skenovat soubor     │
 │ 2. Exit                │
 │                        │
 │                        │
@@ -293,9 +293,9 @@ Chytry Antivirus: 🤡
 └────────────────────────┘";
 
         string frame2option1 = @"
-Chytry Antivirus: 🤡
+API Antivirus: 
 ┌────────────────────────┐
-│ 1. Scan File◄          │
+│ 1. Skenovat soubor◄    │
 │ 2. Exit                │
 │                        │
 │                        │
@@ -305,9 +305,9 @@ Chytry Antivirus: 🤡
 └────────────────────────┘";
 
         string frame1option2 = @"
-Chytry Antivirus: 🤡
+API Antivirus: 
 ┌────────────────────────┐
-│ 1. Scan File           │
+│ 1. Skenovat soubor     │
 │ 2. Exit                │
 │                        │
 │                        │
@@ -317,9 +317,9 @@ Chytry Antivirus: 🤡
 └────────────────────────┘";
 
         string frame2option2 = @"
-Chytry Antivirus: 🤡
+API Antivirus: 
 ┌────────────────────────┐
-│ 1. Scan File           │
+│ 1. Skenovat soubor     │
 │ 2. Exit◄               │
 │                        │
 │                        │
@@ -388,17 +388,17 @@ Chytry Antivirus: 🤡
     static async Task ScanFileAsync()
     {
         Console.Clear();
-        Console.WriteLine("Enter full path of file to scan:");
+        Console.WriteLine("Zadej celou cestu k souboru ke skenovani:");
         string path = Console.ReadLine()?.Trim('"');
 
         if (!File.Exists(path))
         {
-            Console.WriteLine("File not found! Press any key to return...");
+            Console.WriteLine("Soubor nenalezen! Stiskni libovolnou klavesu pro navraceni do menu..");
             Console.ReadKey(true);
             return;
         }
 
-        Console.WriteLine("Uploading file to VirusTotal...");
+        Console.WriteLine("Nahravani souboru do VirusTotal..");
 
         try
         {
@@ -417,13 +417,13 @@ Chytry Antivirus: 🤡
             using JsonDocument doc = JsonDocument.Parse(json);
             string analysisId = doc.RootElement.GetProperty("data").GetProperty("id").GetString();
 
-            Console.WriteLine("File uploaded. Waiting for analysis...");
+            Console.WriteLine("Soubor nahran. Cekani na analyzu..");
 
             int progressCounter = 1;
             bool done = false;
 
             int progressLine = Console.CursorTop;
-            string initialProgressText = $"Analysis in progress... ({progressCounter}x)";
+            string initialProgressText = $"Probiha analyza.. ({progressCounter}x)";
             Console.WriteLine(initialProgressText);
 
             int maxProgressLength = initialProgressText.Length;
@@ -448,8 +448,8 @@ Chytry Antivirus: 🤡
 
                 progressCounter++;
                 string progressText = progressCounter <= 10
-                    ? $"Analysis in progress... ({progressCounter}x)"
-                    : $"Analysis in progress... ({progressCounter}x. Sorry if it's taking long, the API may be tweaking.)";
+                    ? $"Probiha analyza.. ({progressCounter}x)"
+                    : $"Probiha analyza.. ({progressCounter}x. Omlouvame se pokud to trva uz moc dlouho, API na tom pracuje ;))";
 
                 int padLength = Math.Max(progressText.Length, maxProgressLength);
                 maxProgressLength = padLength;
@@ -467,18 +467,18 @@ Chytry Antivirus: 🤡
             int undetected = stats.GetProperty("undetected").GetInt32();
 
             string resultText = $@"
-Scan complete:
-File: {Path.GetFileName(path)}
-Malicious: {malicious}
-Suspicious: {suspicious}
-Harmless: {harmless}
-Undetected: {undetected}
-Scan Time: {DateTime.Now}
+Sken dokoncen:
+Soubor: {Path.GetFileName(path)}
+Skodlive: {malicious}
+Podezrele: {suspicious}
+Neskodne: {harmless}
+Nedetekovano: {undetected}
+Cas skenu: {DateTime.Now}
 ";
 
             Console.SetCursorPosition(0, progressLine + 2);
             Console.WriteLine(resultText);
-            Console.WriteLine("Do you want to save the results to logs? (y/n)");
+            Console.WriteLine("Chcete ulozit vysledky do logu? (y/n)");
             var key = Console.ReadKey(true).Key;
             if (key == ConsoleKey.Y)
             {
@@ -486,20 +486,20 @@ Scan Time: {DateTime.Now}
                 string fullPath = Path.Combine(logFolderPath, fileName);
                 File.WriteAllText(fullPath, resultText);
 
-                Console.WriteLine($"\nLogged results at: {fullPath}");
+                Console.WriteLine($"\nVysledky logu v: {fullPath}");
             }
             else
             {
-                Console.WriteLine("\nResults not logged.");
+                Console.WriteLine("\nVysledky nebyly logovany.");
             }
 
-            Console.WriteLine("\nPress any key to return to menu...");
+            Console.WriteLine("\nStiskni libovolnou klavesu pro navraceni do menu..");
             Console.ReadKey(true);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"\nError: {ex.Message}");
-            Console.WriteLine("Press any key to return...");
+            Console.WriteLine("Stiskni libovolnou klavesu pro navraceni..");
             Console.ReadKey(true);
         }
     }
