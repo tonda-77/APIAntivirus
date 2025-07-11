@@ -1,0 +1,13 @@
+# Ignorovat složku bin
+bin/
+
+# Ignorovat složku obj
+obj/
+
+# Ignorovat všechny .config soubory v projektu
+*.config
+
+# Pokud máš složku .config (skrytou složku), ignoruj ji celou
+.config/
+
+apiAntivirus.csproj
