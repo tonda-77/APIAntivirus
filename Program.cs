@@ -11,18 +11,33 @@ class Program
 {
     // Proměnné z druhé části kódu
     static readonly string apiKey = "80e71974b3ea745f99c7c8e0afa28ef345718011332ccca7cb1d8a44608a0609"; // API Key
+    static readonly string logFolderPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+        "AV_logs", "logs"
+    );
     static int selectedOption = 1;
     static bool blinkState = false;
 
-    static async Task Main() // Log-In system
-    {
+    // Do proměnné se ulozi velikost okna a pred ukoncenim programu se znovu pouzije
+    static int originalWidth = Console.WindowWidth; //uprava pormene na static aby se dala pouzit v main - David
+    static int originalHeight = Console.WindowHeight;
 
+
+
+    static async Task Main() // Login system
+    {
+        // Listy pro uživatelská jména a hesla - Login listy
         List<string> usernames = new List<string>();
         List<string> passwords = new List<string>();
 
-        Console.WriteLine("Cuuus, Ja jsem antivirus pro kontrolovani souboru, slozek, disku, a vseho mozneho 😁🙃");
+        
+        Console.WriteLine("                             y                        ");
+        Console.WriteLine("                                                     ");
+        Console.Clear();
+        Console.WriteLine("Cuus, Ja jsem antivirus pro kontrolovani souboru, slozek, disku, a vseho mozneho 😁🙃");
         KlavesaProPokracovani();
 
+        // Forloop pro login - dokud se uživatel nepřihlásí správně, tak to loopuje
         for (bool correctLogin = false; !correctLogin;)
         {
             Console.WriteLine("                                                     ");
@@ -35,6 +50,7 @@ class Program
             Console.WriteLine("1.       Prihlasit se ");
             Console.WriteLine("2.       Vytvorit si novy ucet ");
             Console.WriteLine("3.       Ukoncit nejlepsi antivirus vsech dob?!?! 😲😖😭");
+            Console.WriteLine("                                                     ");
 
             int loginOptionInput;
             int.TryParse(ReadLineWithQuit(), out loginOptionInput);
@@ -43,13 +59,14 @@ class Program
             switch (loginOptionInput)
             {
                 case 1:
-                    Console.WriteLine("Zadej sve username pro prihlaseni: ");
+                    Console.WriteLine("Zadej sve username pro prihlaseni: 👇");
                     string loginUsernameInput = ReadLineWithQuit();
                     Console.WriteLine("Zadej sve heslo pro prihlaseni: ");
                     string loginPasswordInput = ReadLineWithQuit();
 
+                    // Hodnota urcuje jestli se naslo zadane username v listu "usernames"
                     bool usernameFound = false;
-                    int index = 0;
+                    int index = 0;  // Index pro hesla, aby to bralo index stejny jako zadal user u username
 
                     foreach (string username in usernames)
                     {
@@ -58,12 +75,14 @@ class Program
                             if (passwords[index] == loginPasswordInput)
                             {
 
+                                Console.WriteLine("                                                     ");
                                 Console.WriteLine("Prihlaseni uspesne! 😁");
                                 Thread.Sleep(1000);
                                 correctLogin = true;
                             }
                             else
                             {
+                                Console.WriteLine("                                                     ");
                                 Console.WriteLine("Spatne heslo, zkus to znovu.. 🤔😂😂");
                             }
 
@@ -73,10 +92,13 @@ class Program
                         index++;
                     }
 
+                    // Pokud nenajde username v listu tak se to vrati na case 1
                     if (!usernameFound)
                     {
                         Console.WriteLine("Tvuj username neni v seznamu, zkus to znova.. 😂😂");
-                        Thread.Sleep(1500);
+                        Console.WriteLine("                                                     ");
+                        Thread.Sleep(2000);
+                        Console.Clear();
                         goto case 1;
                     }
                     break;
@@ -85,7 +107,9 @@ class Program
                     bool registrationComplete = false;
                     while (!registrationComplete)
                     {
+                        Console.WriteLine("                                                     ");
                         Console.WriteLine("Oukeeej 😉😂");
+                        Console.WriteLine("                                                     ");
                         Thread.Sleep(500);
 
                         Console.WriteLine("Zadej sve username pro vytvoreni uctu: ");
@@ -97,37 +121,48 @@ class Program
                         passwords.Add(registrationPasswordInput);
                         Thread.Sleep(700);
 
-                        Console.WriteLine("Taakze, toto je tve username: " + registrationUsernameInput + "  😊"); // Vypise tvoje jmeno a heslo
+
+                        chechIfUserAcceptRegistration:
+
+                        Console.Clear();
+                        Console.WriteLine("                                                     ");
+                        Console.WriteLine("Taakze, toto je tve username: " + registrationUsernameInput + "  😊"); // Vypise jmeno a heslo ktere user zadal
                         Thread.Sleep(500);
                         Console.WriteLine("A toto je tve heslo: " + registrationPasswordInput + "  😊");
                         Thread.Sleep(500);
 
                         Console.WriteLine("                                                     ");
-                        Console.WriteLine("                                                     ");
-                        Console.WriteLine("Je takhle vse v poradku (y/n)? 🤔"); // hmmmmmm
+                        Console.WriteLine("Je takhle vse v poradku (y/n)? 🤔");
                         Thread.Sleep(200);
                         Console.WriteLine("Ano (y)");
                         Console.WriteLine("Ne (n)");
                         char confirmRegistrationInput;
+                        
+                        Console.WriteLine("                                                     ");
                         char.TryParse(ReadLineWithQuit(), out confirmRegistrationInput);
                         if (confirmRegistrationInput == 'y')
                         {
-                            Thread.Sleep(1000);
-                            Console.WriteLine("Ukladam.. 🙄");
-                            Thread.Sleep(2500);
-                            // Kontrola s aktuálním indexem (zkracene poslední přidaný účet)
-                            int currentIndex = usernames.Count - 1;
-                            if (registrationUsernameInput == usernames[currentIndex] && registrationPasswordInput == passwords[currentIndex])
-                            {
-                                Console.WriteLine("Vse je v poradku, takze se muzes prihlasit 🤔");
-                                Thread.Sleep(1500);
-                            }
-                            registrationComplete = true; // Ukončí smyčku registrace
+                                Thread.Sleep(1000);
+                                Console.Clear();
+                                Console.WriteLine("                                                     ");
+                                Console.WriteLine("Ukladam.. 🙄");
+                                Thread.Sleep(2000);
+                                // Kontrola s aktuálním indexem (zkracene poslední přidaný účet)
+                                int currentIndex = usernames.Count - 1;
+                                if (registrationUsernameInput == usernames[currentIndex] && registrationPasswordInput == passwords[currentIndex])
+                                {
+                                    Console.WriteLine("                                                     ");
+                                    Console.WriteLine("Vse je v poradku, takze se muzes prihlasit 🤔");
+                                    Thread.Sleep(800);
+                                }
+                                registrationComplete = true; // Ukončí forloop registrace
 
-                            // Přepne na přihlášení
-                            Console.WriteLine("Přepínám na přihlášení.. 🔄");
-                            Thread.Sleep(1000);
-                            goto case 1;
+                                // Přepne na přihlášení
+                                Console.WriteLine("Přepínám na přihlášení.. 🔄");
+                                Thread.Sleep(500);
+                                Console.Clear();
+                                Console.WriteLine("                                                     ");
+                                goto case 1;
                         }
                         else if (confirmRegistrationInput == 'n')
                         {
@@ -138,6 +173,14 @@ class Program
                             passwords.RemoveAt(passwords.Count - 1);
                             Console.WriteLine("Ok, zkus to znovu.. 😊");
                             Thread.Sleep(500);
+                            goto case 2;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Zadana hodnota neni validni, zkus to znovu.. 🤔🤬🤬");
+                            Thread.Sleep(1000);
+                            Console.Clear();
+                            goto chechIfUserAcceptRegistration;
                         }
                     }
                     break;
@@ -148,14 +191,19 @@ class Program
                 default:
                     Console.WriteLine("Zadana hodnota neni validni, zkus to znovu.. 🤔🤬🤬");
                     Thread.Sleep(1000);
-                    goto case 1;
+                    Console.Clear();
                     break;
             }
         }
 
         Console.Clear();
         Console.WriteLine("Vitej v antivirovem skeneru! 🦠🔍");
+        Console.WriteLine("                                                     ");
+        Console.WriteLine("                                                     ");
         Thread.Sleep(1000);
+
+        Directory.CreateDirectory(logFolderPath);
+        // Nastavíme velikost konzole pro pěkné zobrazení menu
         Console.SetWindowSize(50, 20);
         Console.SetBufferSize(50, 20);
         Console.CursorVisible = false;
@@ -172,6 +220,7 @@ class Program
 
     static string ReadLineWithQuit()
     {
+        // Tato funkce čte vstup od uživatele a zároveň kontroluje jestli nechce odejít
         string input = Console.ReadLine();
         if (input != null)
         {
@@ -180,28 +229,39 @@ class Program
             {
                 Console.WriteLine("Ukončuji program.. 👋");
                 Thread.Sleep(1000);
+                Console.Clear();
+                Console.SetWindowSize(originalWidth, originalHeight);
+                Console.SetBufferSize(originalWidth, originalHeight);
                 Environment.Exit(0);
             }
         }
         return input;
     }
 
-    static void quitApp() // NOO NOO QUIT APP TUNG TUNG TUNG SAHUR...
+    static void quitApp() // NOO NOO QUIT APP TUNG TUNG TUNG SAHUR..
     {
-        Console.WriteLine("Neeeeeeeeeeeeee 😖😭😭");
+        Console.Clear();
+        Console.WriteLine("                                                     ");
+        Console.WriteLine("                                                     ");
+        Console.WriteLine("Neeeeeeeeeeeeee 😖😭");
         Thread.Sleep(1500);
-        Console.WriteLine("Doopravdy chces ukoncit appku (y/n)?!? 😖😭");
+        Console.WriteLine("                                                     ");
+        Console.WriteLine("Doopravdy chces ukoncit appku (y/n)?!? 😖");
 
         Thread.Sleep(500);
         Console.WriteLine("Ano (y)");
         Console.WriteLine("Ne (n)");
+        Console.WriteLine("                                                     ");
         char quitGameInput;
         char.TryParse(ReadLineWithQuit(), out quitGameInput);
         switch (quitGameInput)
         {
             case 'y':
-                Console.WriteLine("Ukoncuji program.. 😢😭");
+                Console.WriteLine("Ukoncuji program.. 👋");
                 Thread.Sleep(1000);
+                Console.Clear();
+                Console.SetWindowSize(originalWidth, originalHeight);
+                Console.SetBufferSize(originalWidth, originalHeight);
                 Environment.Exit(0);
                 break;
             case 'n':
@@ -211,6 +271,7 @@ class Program
             default:
                 Console.WriteLine("Zadana hodnota neni validni, zkus to znovu.. 🤔🤬🤬");
                 Thread.Sleep(1000);
+                Console.Clear();
                 quitApp();
                 break;
         }
@@ -219,9 +280,8 @@ class Program
     // Funkce z druhé části kódu (Tohle je ten hlavní anti virus haha)
     static async Task RunMainLoopAsync()
     {
-        // A tohle jsou frames ano... Na animaci ne asi
         string frame1option1 = @"
-Simple Anti-Virus
+Chytry Antivirus: 🤡
 ┌────────────────────────┐
 │ 1. Scan File           │
 │ 2. Exit                │
@@ -233,7 +293,7 @@ Simple Anti-Virus
 └────────────────────────┘";
 
         string frame2option1 = @"
-Simple Anti-Virus
+Chytry Antivirus: 🤡
 ┌────────────────────────┐
 │ 1. Scan File◄          │
 │ 2. Exit                │
@@ -245,7 +305,7 @@ Simple Anti-Virus
 └────────────────────────┘";
 
         string frame1option2 = @"
-Simple Anti-Virus
+Chytry Antivirus: 🤡
 ┌────────────────────────┐
 │ 1. Scan File           │
 │ 2. Exit                │
@@ -257,7 +317,7 @@ Simple Anti-Virus
 └────────────────────────┘";
 
         string frame2option2 = @"
-Simple Anti-Virus
+Chytry Antivirus: 🤡
 ┌────────────────────────┐
 │ 1. Scan File           │
 │ 2. Exit◄               │
@@ -268,7 +328,7 @@ Simple Anti-Virus
 │                        │
 └────────────────────────┘";
 
-        while (true) // Tady to je na ty down/up arrow keys aby jsi mohl selectnout akci
+        while (true)
         {
             while (Console.KeyAvailable)
             {
@@ -288,9 +348,16 @@ Simple Anti-Virus
                 }
                 else if (key == ConsoleKey.Enter)
                 {
+                    Console.Clear();
+
                     if (selectedOption == 2)
                     {
                         Console.CursorVisible = true;
+                        Console.WriteLine("Ukončuji program.. 👋");
+                        Thread.Sleep(1000);
+                        Console.Clear();
+                        Console.SetWindowSize(originalWidth, originalHeight);
+                        Console.SetBufferSize(originalWidth, originalHeight);
                         return;
                     }
                     else if (selectedOption == 1)
@@ -298,6 +365,7 @@ Simple Anti-Virus
                         Console.CursorVisible = true;
                         await ScanFileAsync();
                         Console.CursorVisible = false;
+                        Console.Clear();
                     }
                 }
             }
@@ -313,11 +381,10 @@ Simple Anti-Virus
             Console.Write(frameToDraw);
 
             blinkState = !blinkState;
-            Thread.Sleep(100); // To je rychlost te animace lalala 
+            Thread.Sleep(100);
         }
     }
 
-//Tady dáš ten file který to má skenovat
     static async Task ScanFileAsync()
     {
         Console.Clear();
@@ -331,10 +398,10 @@ Simple Anti-Virus
             return;
         }
 
-        Console.WriteLine("Uploading file to VirusTotal..."); // Self-Explenatory
+        Console.WriteLine("Uploading file to VirusTotal...");
 
         try
-        { // Vytvoří HTTP klienta s API klíčem a připraví soubor k odeslání ve formátu multipart/form-data. WOW🤯
+        {
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("x-apikey", apiKey);
 
@@ -343,21 +410,26 @@ Simple Anti-Virus
             fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
             content.Add(fileContent, "file", Path.GetFileName(path));
 
-
-            HttpResponseMessage uploadResponse = await client.PostAsync("https://www.virustotal.com/api/v3/files", content); // Nahraje soubor na VirusTotal a ověří úspěšnost
+            HttpResponseMessage uploadResponse = await client.PostAsync("https://www.virustotal.com/api/v3/files", content);
             uploadResponse.EnsureSuccessStatusCode();
 
-            // Získá ID analýzy z odpovědi po nahrání souboru haha xd nevim proc se směju
             var json = await uploadResponse.Content.ReadAsStringAsync();
             using JsonDocument doc = JsonDocument.Parse(json);
             string analysisId = doc.RootElement.GetProperty("data").GetProperty("id").GetString();
 
             Console.WriteLine("File uploaded. Waiting for analysis...");
 
+            int progressCounter = 1;
             bool done = false;
+
+            int progressLine = Console.CursorTop;
+            string initialProgressText = $"Analysis in progress... ({progressCounter}x)";
+            Console.WriteLine(initialProgressText);
+
+            int maxProgressLength = initialProgressText.Length;
+
             while (!done)
             {
-                // Počká 5 sekund, pak stáhne stav analýzy a zkontroluje, zda je dokončená. wowie aSHIJNDAIHdsadodshdshadsoiasda achjo čte jsi mě vůbec někdo?
                 await Task.Delay(5000);
 
                 HttpResponseMessage analysisResponse = await client.GetAsync($"https://www.virustotal.com/api/v3/analyses/{analysisId}");
@@ -371,30 +443,62 @@ Simple Anti-Virus
                 if (status == "completed")
                 {
                     done = true;
+                    break;
+                }
 
-                    var stats = analysisDoc.RootElement.GetProperty("data").GetProperty("attributes").GetProperty("stats");
-                    int malicious = stats.GetProperty("malicious").GetInt32();
-                    int suspicious = stats.GetProperty("suspicious").GetInt32();
-                    int harmless = stats.GetProperty("harmless").GetInt32();
-                    int undetected = stats.GetProperty("undetected").GetInt32();
-                    // Tady jsou výsledky
-                    Console.WriteLine("Scan complete:");
-                    Console.WriteLine("Malicious: " + malicious);
-                    Console.WriteLine("Suspicious: " + suspicious);
-                    Console.WriteLine("Harmless: " + harmless);
-                    Console.WriteLine("Undetected: " + undetected);
-                    Console.WriteLine("\nPress any key to return to menu...");
-                    Console.ReadKey(true);
-                }
-                else // A kdyz ne tak to zase da Analysis in progress...
-                {
-                    Console.WriteLine("Analysis in progress...");
-                }
+                progressCounter++;
+                string progressText = progressCounter <= 10
+                    ? $"Analysis in progress... ({progressCounter}x)"
+                    : $"Analysis in progress... ({progressCounter}x. Sorry if it's taking long, the API may be tweaking.)";
+
+                int padLength = Math.Max(progressText.Length, maxProgressLength);
+                maxProgressLength = padLength;
+
+                Console.SetCursorPosition(0, progressLine);
+                Console.Write(progressText.PadRight(padLength));
             }
+
+            var stats = JsonDocument.Parse(await client.GetStringAsync($"https://www.virustotal.com/api/v3/analyses/{analysisId}"))
+                .RootElement.GetProperty("data").GetProperty("attributes").GetProperty("stats");
+
+            int malicious = stats.GetProperty("malicious").GetInt32();
+            int suspicious = stats.GetProperty("suspicious").GetInt32();
+            int harmless = stats.GetProperty("harmless").GetInt32();
+            int undetected = stats.GetProperty("undetected").GetInt32();
+
+            string resultText = $@"
+Scan complete:
+File: {Path.GetFileName(path)}
+Malicious: {malicious}
+Suspicious: {suspicious}
+Harmless: {harmless}
+Undetected: {undetected}
+Scan Time: {DateTime.Now}
+";
+
+            Console.SetCursorPosition(0, progressLine + 2);
+            Console.WriteLine(resultText);
+            Console.WriteLine("Do you want to save the results to logs? (y/n)");
+            var key = Console.ReadKey(true).Key;
+            if (key == ConsoleKey.Y)
+            {
+                string fileName = $"scan_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+                string fullPath = Path.Combine(logFolderPath, fileName);
+                File.WriteAllText(fullPath, resultText);
+
+                Console.WriteLine($"\nLogged results at: {fullPath}");
+            }
+            else
+            {
+                Console.WriteLine("\nResults not logged.");
+            }
+
+            Console.WriteLine("\nPress any key to return to menu...");
+            Console.ReadKey(true);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error: " + ex.Message);
+            Console.WriteLine($"\nError: {ex.Message}");
             Console.WriteLine("Press any key to return...");
             Console.ReadKey(true);
         }
